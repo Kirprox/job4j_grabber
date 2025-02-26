@@ -13,7 +13,7 @@ import static org.quartz.SimpleScheduleBuilder.*;
 public class AlertRabbit {
     private static Integer initInterval() {
         int result = 0;
-        try(InputStream input = AlertRabbit.class.getClassLoader()
+        try (InputStream input = AlertRabbit.class.getClassLoader()
                 .getResourceAsStream("rabbit.properties")) {
             Properties config  = new Properties();
             config.load(input);
