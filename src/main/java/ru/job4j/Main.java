@@ -5,7 +5,6 @@ import ru.job4j.grabber.service.Config;
 import ru.job4j.grabber.service.SchedulerManager;
 import ru.job4j.grabber.service.SuperJobGrab;
 import ru.job4j.grabber.stores.JdbcStore;
-import ru.job4j.grabber.stores.MemStore;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
