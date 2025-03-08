@@ -2,6 +2,7 @@ package ru.job4j.grabber.service;
 
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import ru.job4j.grabber.model.Post;
 import ru.job4j.grabber.utils.HabrCareerDateTimeParser;
 
@@ -52,5 +53,17 @@ public class HabrCareerParse implements Parse {
             LOG.error("When load page", e);
         }
         return result;
+    }
+
+    private String retrieveDescription(String link) {
+        String descriptionResult = "";
+        try {
+            Document connection = Jsoup.connect(link).get();
+            var description = connection.select(".style-ugc");
+            return description.text();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return descriptionResult;
     }
 }
