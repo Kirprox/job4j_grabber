@@ -45,6 +45,7 @@ public class HabrCareerParse implements Parse {
                     post.setTitle(vacancyName);
                     post.setLink(link);
                     post.setTime(timestamp);
+                    post.setDescription(retrieveDescription(link));
                     result.add(post);
                 });
             }
