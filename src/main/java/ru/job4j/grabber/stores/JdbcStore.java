@@ -1,31 +1,45 @@
 package ru.job4j.grabber.stores;
 
 import ru.job4j.grabber.model.Post;
+import ru.job4j.grabber.service.Config;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class JdbcStore implements Store {
-    private final Connection connection;
+    private Connection connection;
 
-    public JdbcStore(Connection connection) {
-        this.connection = connection;
+    public JdbcStore(Config config) {
+        init(config);
+    }
+
+    private void init(Config config) {
+        try {
+            String url = config.get("db.url");
+            String username = config.get("db.username");
+            String password = config.get("db.password");
+            Class.forName(config.get("db.driver-class-name"));
+            connection = DriverManager.getConnection(url, username, password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void save(Post post) {
         try (PreparedStatement statement =
-                connection.prepareStatement("INSERT INTO post(title, link, description, time) "
-                        + "VALUES (?, ?, ?, ?)")) {
+                connection.prepareStatement("INSERT INTO post(title, link, description, time) \n"
+                        + "VALUES (?, ?, ?, ?)\n"
+                        + "ON CONFLICT (link) \n"
+                        + "DO UPDATE SET title = EXCLUDED.title, description = "
+                        + "EXCLUDED.description, time = EXCLUDED.time;\n")) {
             statement.setString(1, post.getTitle());
             statement.setString(2, post.getLink());
             statement.setString(3, post.getDescription());
             statement.setLong(4, post.getTime());
+            statement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -3,21 +3,19 @@ package ru.job4j.grabber.service;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import ru.job4j.grabber.model.Post;
 import ru.job4j.grabber.stores.Store;
 
-import java.sql.SQLException;
+import java.util.List;
 
 public class SuperJobGrab implements Job {
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         var store = (Store) context.getJobDetail().getJobDataMap().get("store");
-        try {
-            for (var post : store.getAll()) {
-                System.out.println(post.getTitle());
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        var parse = (Parse) context.getJobDetail().getJobDataMap().get("parse");
+        List<Post> posts = parse.fetch();
+        posts.forEach(store::save);
+
     }
 }

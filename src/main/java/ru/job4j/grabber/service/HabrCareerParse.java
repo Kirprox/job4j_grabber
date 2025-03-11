@@ -38,7 +38,7 @@ public class HabrCareerParse implements Parse {
                     String vacancyName = titleElement.text();
                     String link = String.format("%s%s", SOURCE_LINK,
                             linkElement.attr("href"));
-                    String dateStr = dateElement.attr("datetime");
+                    String dateStr = dateElement.select("time").attr("datetime");
                     LocalDateTime date = timeParser.parse(dateStr);
                     long timestamp = date.toEpochSecond(ZoneOffset.UTC) * 1000L;
                     var post = new Post();
