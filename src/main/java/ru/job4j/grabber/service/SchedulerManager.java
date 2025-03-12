@@ -44,6 +44,28 @@ public class SchedulerManager {
         }
     }
 
+    public void load(int period, Class<SuperJobGrab> task, Store store) {
+        try {
+            var data = new JobDataMap();
+            data.put("store", store);
+            var job = newJob(task)
+                    .usingJobData(data)
+                    .build();
+            SimpleScheduleBuilder times = simpleSchedule()
+                    .withIntervalInSeconds(period)
+                    .repeatForever();
+
+            Trigger trigger = newTrigger()
+                    .startNow()
+                    .withSchedule(times)
+                    .build();
+
+            scheduler.scheduleJob(job, trigger);
+        } catch (SchedulerException se) {
+            LOG.error("When init job", se);
+        }
+    }
+
     public void close() {
         if (scheduler != null) {
             try {
